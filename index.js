@@ -5,7 +5,7 @@ const DatabaseService = require('./services/DbService')
 const DatabaseConfig = require('./config/settings')
 
 // database connection
-DatabaseService.connect()
+DatabaseService.connect(DatabaseConfig.DATABASE.URL)
 
 // listen to port 
 app.listen(SETTINGS.SERVER.PORT, () => {
