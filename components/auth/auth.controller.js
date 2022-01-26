@@ -1,32 +1,34 @@
 const passport = require("passport");
+const JWTService = require("../../services/JWTService");
+const AppError = require("../../utils/AppError");
+const catchAsync = require("../../utils/catchAsync");
 
 module.exports = {
   Login: async (req, res, next) => {
-    passport.authenticate("Login", (err, user, info) => {
-      passport.authenticate("login", async (err, user, info) => {
-        if (err || !user) {
-          //AUTH FAILED, USER NAME OR PASSWORD INCORRECT
-          const error = new AppError(info.message, "400", info.message);
-          return next(error);
-        }
-        // login function from passport
-        req.login(user, { session: false }, async (error) => {
-          if (error) return next(error);
+    passport.authenticate("Login", async (err, user, info) => {
+      if (err || !user) {
+        console.log(err)
+        //AUTH FAILED, USER NAME OR PASSWORD INCORRECT
+        const error = new AppError(info.message, "400", info.message);
+        return next(error);
+      }
+      // login function from passport
+      req.login(user, { session: false }, async (error) => {
+        if (error) return next(error);
 
-          // handling jwt generation
-          const result = JwtTokenService.generateToken(user);
-          
-          return res.json({
-            status: "success",
-            data: {
-              ...result,
-            },
-          });
+        // handling jwt generation
+        const result = JWTService.generateToken(user);
+
+        return res.json({
+          status: "success",
+          data: {
+            ...result,
+          },
         });
-      })(req, res, next);
+      });
     })(req, res, next);
   },
-  Register: async (req, res, next) => {
+  Register: catchAsync(async (req, res, next) => {
     passport.authenticate("Register", async (err, user, info) => {
       try {
         // check for errors or no user case
@@ -45,7 +47,7 @@ module.exports = {
           return next(error);
         }
 
-        const result = JwtTokenService.generateToken(user);
+        const result = JWTService.generateToken(user);
         return res.json({
           status: "success",
           data: {
@@ -56,5 +58,5 @@ module.exports = {
         return next(error);
       }
     })(req, res, next);
-  },
+  }),
 };

@@ -3,6 +3,7 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const JWTstrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
+const AccountService = require('../components/account/account.service');
 
 // serialize user
 passport.serializeUser(function (user, done) {
@@ -32,8 +33,10 @@ passport.use(
         email = String(email).toLowerCase();
 
         // create account service used here
+        var account = await AccountService.create({email, password})
+        console.log(account)
         const user = {
-          email,
+          email: account.email,
         };
 
         return done(null, user);
@@ -55,15 +58,15 @@ passport.use(
   "Login",
   new LocalStrategy(
     loginStrategyoptions,
-    async (req, email, password, done) => {
+    async (email, password, done) => {
       try {
         email = String(email).toLowerCase();
         // handle fetching email for login
-        const user = {};
-        const isValidPassword = user.isValidPassword(password, user.password);
-        if (!user && !isValidPassword)
+        const account = await AccountService.findByEmail(email);
+        const isValidPassword = account.isValidPassword(password, account.password);
+        if (!account && !isValidPassword)
           return done(null, false, { message: "Invalid email or password." });
-        done(null, user);
+        done(null, account);
       } catch (error) {
         done(error);
       }
@@ -76,15 +79,19 @@ passport.use(
   new JWTstrategy(
     {
       // keys here is being replaced with secret key that is imported from some other place or file
-      secretOrKey: keys.jwtSecretKey,
+      secretOrKey: process.env.JWT_SECRET,
       passReqToCallback: true,
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async function (req, token, done) {
         try {
             // getting user by email and save it in the request
-            let user = {}
-            req.user = user;
+            let account = user
+            delete account.password
+            delete account.hash
+            delete account.salt
+
+            req.user = account;
             return done(null, user);
           } catch (error) {
             return done(error);
