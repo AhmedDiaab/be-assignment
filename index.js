@@ -1,7 +1,11 @@
 // imports
 const app = require('./app')
 const SETTINGS = require('./config/settings')
+const DatabaseService = require('./services/DbService')
+const DatabaseConfig = require('./config/settings')
 
+// database connection
+DatabaseService.connect()
 
 // listen to port 
 app.listen(SETTINGS.SERVER.PORT, () => {
