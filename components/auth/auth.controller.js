@@ -2,7 +2,9 @@ const passport = require("passport");
 const JWTService = require("../../services/JWTService");
 const AppError = require("../../utils/AppError");
 const catchAsync = require("../../utils/catchAsync");
-const MailProducer = require('../../services/Queue/mail/producer')
+const MailProducer = require("../../services/Queue/mail/producer");
+const AccountService = require("../account/account.service");
+const { sign } = require("jsonwebtoken");
 
 module.exports = {
   Login: async (req, res, next) => {
@@ -47,10 +49,16 @@ module.exports = {
           );
           return next(error);
         }
+        const token = sign({
+          token: user.token,
+          account: user._id
+        },process.env.MAIL_TOKEN_SECRET, {
+          expiresIn: "15m",
+        });
         // call mail service
         const content = `
-          Please confirm your account throught this link
-          <a href="hello world">Click Me</a>
+          Please confirm your account throught this link <br />
+          <a href="localhost:8080/api/v1/account/verify/${token}">Click Me</a>
         `;
         MailProducer.sendEmail({
           email: user.email,
@@ -68,5 +76,18 @@ module.exports = {
         return next(error);
       }
     })(req, res, next);
+  }),
+  VerifyAccount: catchAsync(async (req, res, next) => {
+    // encoded token in url holds user id and token in account
+    const valid = await AccountService.validateToken(req.params.token);
+    if (valid)
+      return res.json({
+        status: "success",
+        message: 'Account verified.'
+      });
+    return res.json({
+      status: "fail",
+      message: 'Invalid token or expired.'
+    });
   }),
 };

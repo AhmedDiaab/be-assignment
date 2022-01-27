@@ -3,7 +3,8 @@ const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const JWTstrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
-const AccountService = require('../components/account/account.service');
+const AccountService = require("../components/account/account.service");
+const { randomBytes } = require("crypto");
 
 // serialize user
 passport.serializeUser(function (user, done) {
@@ -31,14 +32,12 @@ passport.use(
       try {
         // handle creating email if not exists
         email = String(email).toLowerCase();
-
+        const token = randomBytes(32);
         // create account service used here
-        var account = await AccountService.create({email, password})
-        console.log(account)
+        var account = await AccountService.create({ email, password, token });
         const user = {
-          email: account.email,
+          ...account,
         };
-
         return done(null, user);
       } catch (error) {
         return done(error);
@@ -56,22 +55,22 @@ const loginStrategyoptions = {
 // create named strategy for login
 passport.use(
   "Login",
-  new LocalStrategy(
-    loginStrategyoptions,
-    async (email, password, done) => {
-      try {
-        email = String(email).toLowerCase();
-        // handle fetching email for login
-        const account = await AccountService.findByEmail(email);
-        const isValidPassword = account.isValidPassword(password, account.password);
-        if (!account && !isValidPassword)
-          return done(null, false, { message: "Invalid email or password." });
-        done(null, account);
-      } catch (error) {
-        done(error);
-      }
+  new LocalStrategy(loginStrategyoptions, async (email, password, done) => {
+    try {
+      email = String(email).toLowerCase();
+      // handle fetching email for login
+      const account = await AccountService.findByEmail(email);
+      const isValidPassword = account.isValidPassword(
+        password,
+        account.password
+      );
+      if (!account && !isValidPassword)
+        return done(null, false, { message: "Invalid email or password." });
+      done(null, account);
+    } catch (error) {
+      done(error);
     }
-  )
+  })
 );
 
 // create named strategy for jwt
@@ -84,18 +83,18 @@ passport.use(
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
     async function (req, token, done) {
-        try {
-            // getting user by email and save it in the request
-            let account = user
-            delete account.password
-            delete account.hash
-            delete account.salt
+      try {
+        // getting user by email and save it in the request
+        let account = user;
+        delete account.password;
+        delete account.hash;
+        delete account.salt;
 
-            req.user = account;
-            return done(null, user);
-          } catch (error) {
-            return done(error);
-          }
+        req.user = account;
+        return done(null, user);
+      } catch (error) {
+        return done(error);
+      }
     }
   )
 );
