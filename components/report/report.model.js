@@ -1,5 +1,15 @@
 const { Schema, model, Types } = require("mongoose");
 const schema = new Schema({
+    account: {
+        type: Types.ObjectId,
+        ref: 'account',
+        required: true
+    },
+    check: {
+        type: Types.ObjectId,
+        ref: 'check',
+        required: true
+    },
     status: {
         type: String,
         required: true,
@@ -29,6 +39,6 @@ const schema = new Schema({
     timestamps: true
 })
 
-const History = model('history', schema)
+const Report = model('report', schema)
 
-module.exports = History
+module.exports = Report
