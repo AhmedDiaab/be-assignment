@@ -7,11 +7,11 @@ const create = async (account = { email, password, verificationToken }) => {
   const accountData = new Account(account);
   return accountData.save();
 };
-
+// find account by id
 const findById = async (accountId) => {
   return await Account.findOne({ _id: accountId }).lean();
 };
-
+// find account by email
 const findByEmail = async (email) => {
   return await Account.findOne({ email }).lean();
 };
@@ -51,7 +51,7 @@ const updatePassword = async (accountId, currentPassword, newPassword) => {
     data: "password updated",
   };
 };
-
+// token validation for email sent
 const validateToken = async (urlToken) => {
   const payload = verify(urlToken, process.env.MAIL_TOKEN_SECRET);
   if (payload.token && payload.account) {
