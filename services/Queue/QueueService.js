@@ -7,7 +7,7 @@ const connectQueue = (queueName) => {
       port: parseInt(process.env.REDIS_PORT),
       host: process.env.REDIS_HOST,
       password: process.env.REDIS_PASSWORD,
-      db: 10840912
+      db: process.env.REDIS_DB_INDEX
     },
   });
 };
