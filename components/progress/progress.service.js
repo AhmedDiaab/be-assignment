@@ -6,7 +6,7 @@ const create = async (checkId, progressData = {progress : 0, status : 'Stopped'}
 }
 
 const update = async (checkId, progress, status) => {
-    return await Progress.updateOne({check: checkId}, {progress, status}, {new: true})
+    return await Progress.findOneAndUpdate({check: checkId}, {progress, status}, {new: true})
 }
 
 const remove = async (checkId) => {

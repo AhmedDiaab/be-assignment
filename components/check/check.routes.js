@@ -6,7 +6,7 @@ router.post("/check", passport.authenticate("jwt"), CheckController.Create);
 
 router.get("/check/:id", passport.authenticate("jwt"), CheckController.GetOne);
 
-router.get("/check/all", passport.authenticate("jwt"), CheckController.GetAll);
+router.get("/check", passport.authenticate("jwt"), CheckController.GetAll);
 
 router.put("/check/:id", passport.authenticate("jwt"), CheckController.Update);
 

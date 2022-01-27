@@ -13,7 +13,7 @@ const findById = async (accountId) => {
 };
 // find account by email
 const findByEmail = async (email) => {
-  return await Account.findOne({ email }).lean();
+  return await Account.findOne({ email });
 };
 
 // used to get account data
@@ -59,7 +59,7 @@ const validateToken = async (urlToken) => {
     if (!exists) return false;
     var _account = await Account.findOne({ _id: payload.account }).lean();
     if (_account.verificationToken == payload.token) {
-      await Account.updateOne(
+      await Account.findOneAndUpdate(
         { _id: payload.account },
         { verified: true, verificationToken: null }
       );

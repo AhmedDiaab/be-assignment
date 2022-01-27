@@ -17,7 +17,7 @@ const getAll = async (accountId = null) => {
 const update = async (id, reportData) => {
     const exists = Report.exists({id})
     if(exists) {
-        return await Report.updateOne({_id: id}, {...reportData}, {new: true}) 
+        return await Report.findOneAndUpdate({_id: id}, {...reportData}, {new: true}) 
     }
     return false
 };

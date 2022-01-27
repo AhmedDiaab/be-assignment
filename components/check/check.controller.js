@@ -3,7 +3,7 @@ const CheckService = require("./check.service");
 
 module.exports = {
   Create: catchAsync(async (req, res, next) => {
-    const check = await CheckService.create(req.body);
+    const check = await CheckService.create({...req.body, account : req.user._id});
     return res.json({
       status: "success",
       data: {
@@ -19,7 +19,7 @@ module.exports = {
     })
   }),
   GetAll: catchAsync(async(req,res,next)=> {
-    const checks = await CheckService.getAll(req.params.tags)
+    const checks = await CheckService.getAll(req.query.tags)
     return res.json({
       status: 'success',
       data: checks

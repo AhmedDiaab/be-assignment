@@ -5,6 +5,7 @@ const JWTstrategy = require("passport-jwt").Strategy;
 const ExtractJWT = require("passport-jwt").ExtractJwt;
 const AccountService = require("../components/account/account.service");
 const { randomBytes } = require("crypto");
+const { verify } = require("jsonwebtoken");
 
 // serialize user
 passport.serializeUser(function (user, done) {
@@ -32,10 +33,14 @@ passport.use(
       try {
         // handle creating email if not exists
         email = String(email).toLowerCase();
-        const token = randomBytes(32).toString('base64');
+        const token = randomBytes(32).toString("base64");
         // create account service used here
-        var account = await AccountService.create({ email, password, verificationToken: token });
-        delete account._doc.password
+        var account = await AccountService.create({
+          email,
+          password,
+          verificationToken: token,
+        });
+        delete account._doc.password;
         const user = {
           ...account._doc,
         };
@@ -83,7 +88,7 @@ passport.use(
       passReqToCallback: true,
       jwtFromRequest: ExtractJWT.fromAuthHeaderAsBearerToken(),
     },
-    async function (req, token, done) {
+    async function (req, user, done) {
       try {
         // getting user by email and save it in the request
         let account = user;

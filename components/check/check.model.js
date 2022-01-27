@@ -54,18 +54,15 @@ const schema = new Schema(
 
       username: {
         type: String,
-        required: true,
       },
       password: {
         type: String,
-        required: true,
       },
     },
     assert: {
       // assert schema that can be used when asserting status code (used in polling response)
       statusCode: {
         type: Number,
-        required: true,
       },
     },
     tags: {
@@ -77,7 +74,7 @@ const schema = new Schema(
       required: false,
     },
     // reference to user
-    user: {
+    account: {
       type: Types.ObjectId,
     },
     progress: {
