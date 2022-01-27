@@ -49,8 +49,9 @@ module.exports = {
           );
           return next(error);
         }
+        console.log(user)
         const token = sign({
-          token: user.token,
+          token: user.verificationToken,
           account: user._id
         },process.env.MAIL_TOKEN_SECRET, {
           expiresIn: "15m",
@@ -58,7 +59,7 @@ module.exports = {
         // call mail service
         const content = `
           Please confirm your account throught this link <br />
-          <a href="localhost:8080/api/v1/account/verify/${token}">Click Me</a>
+          <a href="http://localhost:8080/api/v1/account/verify/${token}">http://localhost:8080/api/v1/account/verify/${token}</a>
         `;
         MailProducer.sendEmail({
           email: user.email,

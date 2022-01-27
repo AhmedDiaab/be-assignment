@@ -3,7 +3,7 @@ const { compare } = require("bcrypt");
 const { verify } = require("jsonwebtoken");
 
 // used to create account, called in register route in auth
-const create = async (account = { email, password, token }) => {
+const create = async (account = { email, password, verificationToken }) => {
   const accountData = new Account(account);
   return accountData.save();
 };
@@ -55,13 +55,13 @@ const updatePassword = async (accountId, currentPassword, newPassword) => {
 const validateToken = async (urlToken) => {
   const payload = verify(urlToken, process.env.MAIL_TOKEN_SECRET);
   if (payload.token && payload.account) {
-    const exists = await Account.exists({ _id: account });
+    const exists = await Account.exists({ _id: payload.account });
     if (!exists) return false;
-    var _account = await Account.findOne({ _id: account }).lean();
-    if (_account.token == token) {
+    var _account = await Account.findOne({ _id: payload.account }).lean();
+    if (_account.verificationToken == payload.token) {
       await Account.updateOne(
-        { _id: account },
-        { verified: true, token: null }
+        { _id: payload.account },
+        { verified: true, verificationToken: null }
       );
       return true;
     }

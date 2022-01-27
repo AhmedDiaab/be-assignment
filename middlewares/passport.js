@@ -32,11 +32,12 @@ passport.use(
       try {
         // handle creating email if not exists
         email = String(email).toLowerCase();
-        const token = randomBytes(32);
+        const token = randomBytes(32).toString('base64');
         // create account service used here
-        var account = await AccountService.create({ email, password, token });
+        var account = await AccountService.create({ email, password, verificationToken: token });
+        delete account._doc.password
         const user = {
-          ...account,
+          ...account._doc,
         };
         return done(null, user);
       } catch (error) {
