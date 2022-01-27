@@ -2,12 +2,13 @@ const passport = require("passport");
 const JWTService = require("../../services/JWTService");
 const AppError = require("../../utils/AppError");
 const catchAsync = require("../../utils/catchAsync");
+const MailProducer = require('../../services/Queue/mail/producer')
 
 module.exports = {
   Login: async (req, res, next) => {
     passport.authenticate("Login", async (err, user, info) => {
       if (err || !user) {
-        console.log(err)
+        console.log(err);
         //AUTH FAILED, USER NAME OR PASSWORD INCORRECT
         const error = new AppError(info.message, "400", info.message);
         return next(error);
@@ -46,7 +47,16 @@ module.exports = {
           );
           return next(error);
         }
-
+        // call mail service
+        const content = `
+          Please confirm your account throught this link
+          <a href="hello world">Click Me</a>
+        `;
+        MailProducer.sendEmail({
+          email: user.email,
+          content,
+          subject: "CheckAPI Account Confirmation",
+        });
         const result = JWTService.generateToken(user);
         return res.json({
           status: "success",

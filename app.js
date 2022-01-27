@@ -1,9 +1,11 @@
 // the file that contains routes and configuration for express
+require('dotenv').config()
 const express = require('express')
 const routes = require('./routes');
 const app = express();
 const ErrorHandler = require('./handlers/ErrorHandler')
-require('dotenv').config()
+const MailConsumer = require('./services/Queue/mail/consumer')
+
 // use middleware to parse json
 app.use(express.json());
 
@@ -16,4 +18,8 @@ app.use("/api/v1",routes)
 // error handling
 app.use(ErrorHandler);
 
+// mail queue consumer
+MailConsumer.init()
+
 module.exports = app;
+
