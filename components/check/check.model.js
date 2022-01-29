@@ -24,7 +24,6 @@ const schema = new Schema(
     },
     port: {
       type: Number,
-      required: true,
     },
     webhook: {
       type: String,

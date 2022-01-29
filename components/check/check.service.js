@@ -64,7 +64,7 @@ const update = async (checkData = { _id, ...opts }) => {
   return null;
 };
 
-// funcyion used to delete check using id
+// function used to delete check using id
 const remove = async (checkId) => {
   const exists = await Check.exists({ _id: checkId });
   if (exists) {
