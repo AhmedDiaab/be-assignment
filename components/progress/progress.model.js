@@ -16,6 +16,15 @@ const schema = new Schema({
         default: "Stopped",
         enum: ["Stopped", "Running"]
     },
+    responseTime : {
+        type: [Number]
+    },
+    history: [String],
+    failures: {
+        type: Number,
+        required: true,
+        default: 0
+    }
 },{
     timestamps: true
 })
