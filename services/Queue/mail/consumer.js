@@ -24,7 +24,7 @@ const processJob = (job, done) => {
     MailService.sendMail(subject, content, email).then((res) => {
       done(null, "success");
     });
-  } catch (err) {
+  } catch (error) {
     // handle error
     done(null, error);
   }
