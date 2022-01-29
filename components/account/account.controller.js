@@ -1,7 +1,6 @@
 // imports
 const AccountService = require("./account.service");
 const catchAsync = require("../../utils/catchAsync");
-const MailService = require('../../services/MailService')
 
 module.exports = {
     // function used to get account data
