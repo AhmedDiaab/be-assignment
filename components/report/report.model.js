@@ -15,20 +15,21 @@ const schema = new Schema({
         required: true,
         enum: ["Up", "Down"]
     },
+    downtime: {
+        type: Number,
+        min: 0
+    },
     availability: {
         type: Number,
         min:0,
         max: 100,
-        required: true
     },
     outages: {
         type: Number,
-        required: true
     },
     uptime: {
         type: Number,
-        required: true,
-        min:0
+        min:0,
     },
     responseTime: {
         type: Number,
