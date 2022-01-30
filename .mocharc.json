@@ -1,5 +1,5 @@
 {
-	"spec": "test/*.spec.ts",
+	"spec": "test/*.spec.js",
 	"extension": ["js"],
 	"inline-diffs ": true,
 	"full-trace": true,

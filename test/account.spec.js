@@ -4,20 +4,20 @@ process.env.NODE_ENV = 'testing';
 // imports  
 const request = require('supertest');
 const app = require('../app');
-const Account = require('../components/account/account.model');
+const { findAccount } = require('./fixtures/account');
 const database = require('./fixtures/database')
 var expect = require('chai').expect;
 
 // initialize db before running test
 before(async () => {
     await database.connect()
+    await database.clearDatabase()
 });
 
 // user can register
 describe('User', () => {
     var response
     var token
-    var emailToken
     // send post request
     it('can register by sending post request to register endpoint.', async () => {
         response = await request(app)
@@ -28,7 +28,7 @@ describe('User', () => {
     })
 
     it('should be saved in database', async () => {
-        const account = await Account.findOne({_id: response.body.data.account._id})
+        const account = await findAccount(response.body.data.account._id)
         expect(account).to.not.be.null
     })
 

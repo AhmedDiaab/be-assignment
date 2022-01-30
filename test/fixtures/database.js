@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 
 // models
-const Account = require("../../components/account/account.model");
 const Check = require("../../components/check/check.model");
 const Progress = require("../../components/progress/progress.model");
 const Report = require("../../components/report/report.model");
@@ -50,9 +49,11 @@ const checks = [
   {
     _id: checkIds[0],
     name: "first one",
-    url: "fast.com",
-    protocol: "HTTPS",
+    url: "127.0.0.1",
+    port: "8080",
+    protocol: "HTTP",
     account: accountsIds[0],
+    tags: ["TestTag1"]
   },
   {
     _id: checkIds[1],
@@ -60,6 +61,8 @@ const checks = [
     url: "fast.com",
     protocol: "HTTPS",
     account: accountsIds[1],
+    tags: ["TestTag2"]
+
   },
 ];
 
@@ -89,8 +92,8 @@ const reports = [
   },
   {
     _id: reportIds[1],
-    account: accountsIds[0],
-    check: checkIds[0],
+    account: accountsIds[1],
+    check: checkIds[1],
     status: "Up",
   },
 ];
