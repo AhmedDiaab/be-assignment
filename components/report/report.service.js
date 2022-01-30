@@ -17,8 +17,15 @@ const getByFilter = async (filter = {account, check}) => {
     return await Report.findOne(filter).lean()
 }
 
-const getAll = async (accountId = null) => {
-    const reports = !accountId ? await Report.find({ }) : await Report.find({ account: accountId })
+const getAll = async (tags = []) => {
+    const reports = !tags || tags.length == 0 ? await Report.find({ }) : 
+    await Report.aggregate([
+        {
+          $match: {
+            tags: { $in: tags },
+          },
+        }
+      ]);
     return reports
 };
 

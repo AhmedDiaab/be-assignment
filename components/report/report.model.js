@@ -35,7 +35,8 @@ const schema = new Schema({
         type: Number,
         min:0
     },
-    history: [String]
+    history: [String],
+    tags: [String]
 }, {
     timestamps: true
 })

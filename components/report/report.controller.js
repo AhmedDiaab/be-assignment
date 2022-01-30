@@ -3,7 +3,7 @@ const catchAsync = require("../../utils/catchAsync");
 
 module.exports = {
   GetAll: catchAsync(async (req, res, next) => {
-    const reports = await ReportService.getAll();
+    const reports = await ReportService.getAll(req.query.tags);
     res.json({
       status: "success",
       data: reports,
