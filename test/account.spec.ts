@@ -11,13 +11,13 @@ var expect = require('chai').expect;
 // initialize db before running test
 before(async () => {
     await database.connect()
-    await database.clearDatabase()
 });
 
 // user can register
 describe('User', () => {
     var response
     var token
+    var emailToken
     // send post request
     it('can register by sending post request to register endpoint.', async () => {
         response = await request(app)
@@ -55,6 +55,13 @@ describe('User', () => {
         response = await request(app)
         .get('/api/v1/account')
         .set('Authorization', `Bearer ${token}`)
+        .send()
+        .expect(200)
+    })
+
+    it('can verify account', async () => {
+        response = await request(app)
+        .get(`/api/v1/account/verify/${database.accounts[0].verificationToken}`)
         .send()
         .expect(200)
     })
