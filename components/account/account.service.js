@@ -24,7 +24,7 @@ const getData = async (accountId) => {
 };
 // used to update password
 const updatePassword = async (accountId, currentPassword, newPassword) => {
-  var account = await Account.findOne({ _id: accountId }).lean();
+  var account = await Account.findOne({ _id: accountId });
   var match = await compare(currentPassword, account.password);
   if (!match)
     return {

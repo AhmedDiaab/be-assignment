@@ -49,7 +49,7 @@ module.exports = {
           );
           return next(error);
         }
-        console.log(user)
+
         const token = sign({
           token: user.verificationToken,
           account: user._id

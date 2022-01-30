@@ -10,4 +10,9 @@ router.get(
   AccountController.GetAccountData
 );
 
+router.post("/account/pass", 
+passport.authenticate("jwt"),
+AccountController.UpdatePassword
+)
+
 module.exports = router;
