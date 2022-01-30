@@ -89,12 +89,14 @@ const reports = [
     account: accountsIds[0],
     check: checkIds[0],
     status: "Up",
+    tags: ["testTag1", "testTag2"]
   },
   {
     _id: reportIds[1],
     account: accountsIds[1],
     check: checkIds[1],
     status: "Up",
+    tags: ["testTag4", "testTag3"]
   },
 ];
 

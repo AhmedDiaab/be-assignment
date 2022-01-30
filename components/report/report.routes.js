@@ -3,7 +3,7 @@ const ReportController = require("./report.controller");
 const passport = require("passport");
 
 router.get(
-  "/report/all",
+  "/report",
   passport.authenticate("jwt"),
   ReportController.GetAll
 );

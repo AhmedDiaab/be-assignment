@@ -5,8 +5,6 @@ process.env.NODE_ENV = "testing";
 const request = require("supertest");
 const app = require("../app");
 const database = require("./fixtures/database");
-const Account = require("./fixtures/account");
-
 var expect = require("chai").expect;
 
 var token;
