@@ -6,6 +6,7 @@ instance.interceptors.request.use((config) => {
     config.headers['request-startTime'] = process.hrtime()
     return config
 })
+
 // append request duration to response headers in ms
 instance.interceptors.response.use((response) => {
     const start = response.config.headers['request-startTime']

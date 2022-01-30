@@ -5,10 +5,13 @@ const handleCompleted = (job) => {
 
 const handleFailure = (job, err) => {
   if (job.attemptsMade >= job.opts.attempts) {
+    // console.info(
+    //   `Job failures above threshold in ${job.queue.name} for: ${job.id}`,
+    //   err
+    // );
     console.info(
-      `Job failures above threshold in ${job.queue.name} for: ${job.id}`,
-      err
-    );
+        `Job failures above threshold in ${job.queue.name} for: ${job.id}`
+      );
     return null;
   }
   console.info(

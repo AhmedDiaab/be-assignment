@@ -25,9 +25,19 @@ const sendMail = async (account, reportId, content) => {
     MailProducer.sendEmail(mailData)
 }
 
+// getting duration for error
+const getDuration = (start) => {
+  const end = process.hrtime(start)
+  const milliseconds = Math.round((end[0] * 1000) + (end[1] / 1000000))
+  return milliseconds
+}
 
 // functions used in jobs for reject and resolve the check
 const onReject = async (error,check ,current, end, isFirst, done) => {
+
+    // calculate duration
+    const duration = getDuration(error.config.headers['request-startTime'])
+
     // calculating percentage 
     const checkProgress = parseInt((current / end * 100))
 
@@ -35,27 +45,35 @@ const onReject = async (error,check ,current, end, isFirst, done) => {
     var progress = await ProgressService.findByCheck(check._id)
 
     // handle recheck after completing the check
-    progress.responseTime =  isFirst ? [response.headers['request-duration']] : [...progress.responseTime, response.headers['request-duration']]
+    progress.responseTime =  isFirst ? [duration] : [...progress.responseTime, duration]
 
     // create history document that contain log
-    const log = `${new Date(Date.now())} ${response.config.method.toUpperCase()} ${response.config.url} ${String(check.protocol).toUpperCase()} ${parseInt(response.headers['request-duration'])} ms`
+    const log = `${new Date(Date.now())} ${error.request.method.toUpperCase()} ${error.response.status} ${error.config.url} ${String(check.protocol).toUpperCase()} ${duration} ms`
 
     // append logs to progress
     const logs = isFirst ? [log] : [...progress.history, log]
 
+    // handle case null 
+    if(!progress.failures) progress.failures = 0
+
+    // handle failures
     progress.failures = progress.failures + 1
+
     // update progress
     await ProgressService.update(check._id, checkProgress, "Stopped", progress.responseTime, logs, progress.failures++)
 
     // handling report
+
+    // setting report to down status
+    const report = await ReportService.getByFilter({account: check.account, check: check._id})
+
+
     // calculating downtime 
     const downtime = report.downtime + (check.interval / 60);
 
     // calculating availability 
     const availability = (report.uptime / (downtime + report.uptime)) * 100
     
-    // setting report to down status
-    const report = await ReportService.getByFilter({account: check.account, check: check._id})
 
     // updating report
     await ReportService.update(report._id, {
@@ -89,7 +107,7 @@ const onReject = async (error,check ,current, end, isFirst, done) => {
 
     // sending email to user
     MailProducer.sendEmail(mailData)
-    
+
     done(error)
 }
 
@@ -101,7 +119,7 @@ const onResolve = async (response, check ,current, end, isFirst ,done) => {
     
     // calculating percentage 
     const checkProgress = parseInt((current / end * 100))
-    // console.log(checkProgress)
+
     const checkStatus = checkProgress < 100 ? "Running" : "Stopped"
     // get progress
     var progress = await ProgressService.findByCheck(check._id)

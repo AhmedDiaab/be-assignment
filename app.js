@@ -17,7 +17,7 @@ require("./middlewares/passport");
 app.use("/api/v1", routes);
 
 app.get("/", (req, res, next) => {
-  res.status(200).send("success");
+  res.status(500).send();
 });
 
 // error handling
