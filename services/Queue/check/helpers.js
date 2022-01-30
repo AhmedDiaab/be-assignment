@@ -4,6 +4,7 @@ const ReportService = require("../../../components/report/report.service")
 const AccountService = require('../../../components/account/account.service')
 const { average } = require('../../../utils/operations');
 const MailProducer = require("../mail/producer");
+const { default: axios } = require('axios');
 
 // function used when sending email, whether website is down or up
 
@@ -67,6 +68,8 @@ const onReject = async (error,check ,current, end, isFirst, done) => {
     // setting report to down status
     const report = await ReportService.getByFilter({account: check.account, check: check._id})
 
+    // send post request here to whatever webhook
+    // if (report.status == "Up") axios.post("", {message: "website is down"})
 
     // calculating downtime 
     const downtime = report.downtime + (check.interval / 60);
@@ -106,6 +109,8 @@ const onReject = async (error,check ,current, end, isFirst, done) => {
     // checking for threshold 
     if(progress.failures == check.threshold) MailProducer.sendEmail(mailData) // sending email to user
 
+    // send post request here to whatever webhook
+
     done(error)
 }
 
@@ -142,6 +147,9 @@ const onResolve = async (response, check ,current, end, isFirst ,done) => {
 
     // getting report 
     const report = await ReportService.getByFilter({account: check.account, check: check._id})
+
+    // send post request here to whatever webhook
+    // if (report.status == "Down") axios.post("", {message: "website is up"})
 
     // generating link for report
     const link = `${process.env.BASE_URL}/report/${report._id}`
@@ -190,7 +198,7 @@ const onResolve = async (response, check ,current, end, isFirst ,done) => {
 
     // sending email to user
     await sendMail(check.account,report._id, content)
-    
+
     // make job done
     done(null, true)
 }
