@@ -78,6 +78,7 @@ const initDatabase = async () => {
 }
 
 module.exports = {
+    initDatabase,
     accounts,
     checks,
     progresses,
