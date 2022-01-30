@@ -60,7 +60,7 @@ const onReject = async (error,check ,current, end, isFirst, done) => {
     progress.failures = progress.failures + 1
 
     // update progress
-    await ProgressService.update(check._id, checkProgress, "Stopped", progress.responseTime, logs, progress.failures++)
+    await ProgressService.update(check._id, checkProgress, "Stopped", progress.responseTime, logs, progress.failures)
 
     // handling report
 
@@ -101,12 +101,10 @@ const onReject = async (error,check ,current, end, isFirst, done) => {
         subject: "Regarding your check <CheckAPI>",
         content
     }
-
+    // handle first check of the interval 
+    if(progress.failures != check.threshold && isFirst) MailProducer.sendEmail(mailData)
     // checking for threshold 
-    if(progress.failures != check.threshold) return done(error)
-
-    // sending email to user
-    MailProducer.sendEmail(mailData)
+    if(progress.failures == check.threshold) MailProducer.sendEmail(mailData) // sending email to user
 
     done(error)
 }

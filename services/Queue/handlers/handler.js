@@ -3,7 +3,7 @@ const handleCompleted = (job) => {
   job.remove();
 };
 
-const handleFailure = (job, err) => {
+const handleFailure = async (job, err) => {
   if (job.attemptsMade >= job.opts.attempts) {
     // console.info(
     //   `Job failures above threshold in ${job.queue.name} for: ${job.id}`,
